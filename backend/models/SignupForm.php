@@ -1,26 +1,17 @@
 <?php
 
 namespace backend\models;
-use yii\web\IdentityInterface;
-use backend\models\UserBackend;
-use Yii;
 
-/**
- * This is the model class for table "{{%user_backend}}".
- *
- * @property integer $id
- * @property string $username
- * @property string $auth_key
- * @property string $password_hash
- * @property string $email
- * @property string $created_at
- * @property string $updated_at
- */
-class signForm extends \yii\db\ActiveRecord implements IdentityInterface
+
+use yii\base\Model;
+use backend\models\UserBackend;
+
+
+class SignupForm extends Model
 {
 	public $username;
 	public $email;
-	public $passworld;
+	public $password;
 
 	protected $created_at;
 	protected $updated_at;
@@ -52,21 +43,7 @@ class signForm extends \yii\db\ActiveRecord implements IdentityInterface
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => '自增id',
-            'username' => '用户名',
-            'auth_key' => '签名key',
-            'password_hash' => '登录密码',
-            'email' => '用户邮箱',
-            'created_at' => '创建时间',
-            'updated_at' => '更新时间',
-        ];
-    }
+
 
      /**
       * 根据user_backend 表主见获取用户
@@ -114,26 +91,26 @@ class signForm extends \yii\db\ActiveRecord implements IdentityInterface
         return $this->getAuthKey() === $authKey;
     }
 
-
-    public function beforeSave($insert)
+    /**
+     * 后天添加用户方法、
+     * 
+     * @return true|false 添加成功后者失败
+     */
+    public function signup()
     {
-        if(parent::beforeSave($insert))
-        {
-            if($this->isNewRecord)
-            {
-                
-                $this->created_at= date('Y-m-d H:i:s');
-                $this->updated_at= date('Y-m-d H:i:s');
-            } 
-            else
-            {
-                $this->updated_at= date('Y-m-d H:i:s');
-            }
-            return true;
-        }
-        else
-            return false;
-    }
+    	if(!$this->validate())
+    		return true;
 
-    
+    	$user = new UserBackend();
+    	$user->username  = $this->username;
+    	$user->email = $this->email;
+    	// 设置密码
+    	$user->setPassword($this->password);
+    	// 生产 "remeber me " 认证key 
+    	$user->generateAuthKey();
+
+    	// save(false)的意思是：不调用UserBackend的rules再做校验并实现数据入库操作
+        // 这里这个false如果不加，save底层会调用UserBackend的rules方法再对数据进行一次校验，因为我们上面已经调用Signup的rules校验过了，这里就没必要在用UserBackend的rules校验了
+        return $user->save(false);
+    }
 }

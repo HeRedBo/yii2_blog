@@ -121,4 +121,21 @@ class UserBackendController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    /**
+     * create new user
+     * @return [type] [description]
+     */
+    public function actionSignup()
+    {
+        $model = new \backend\models\SignupForm();
+        if($model->load(Yii::$app->request->post()) && $model->signup())
+        {
+            return $this->redirect(['index']);
+        }
+
+        return $this->render('signup',[
+            'model' =>$model
+        ]);
+    }
 }
