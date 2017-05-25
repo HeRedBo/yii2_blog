@@ -1,0 +1,14 @@
+## 安装 yii2-adminlte-asset
+composer require dmstr/yii2-adminlte-asset "2.*"
+composer require dmstr/yii2-adminlte-asset "2.*"
+
+
+﻿1.首先在github上创建一个资源
+2.切换到你本地目录下
+3.git init
+4.git remote add origin git@github.com:HeRedBo/yii2_blog.git
+5.git add --all
+6.git commit -m 'add'
+7.git push origin master
+8.完成
+
