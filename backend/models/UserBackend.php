@@ -114,4 +114,20 @@ class UserBackend extends \yii\db\ActiveRecord implements IdentityInterface
     {
         $this->auth_key  = Yii::$app->security->generateRandomString();
     }
+    
+    /**
+     * 校验用户密码的准确性
+     *
+     * @param string  $password
+     * @return bool
+     */
+    public function validatePassword($password)
+    {
+        return Yii::$app->security->validatePassword($password, $this->password_hash);
+    }
+    
+    public static  function findByUsername($username)
+    {
+        return static::findOne(['username' => $username]);
+    }
 }
